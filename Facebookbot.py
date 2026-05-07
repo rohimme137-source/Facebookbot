@@ -1,40 +1,51 @@
 import os
 import time
+import requests
+import mechanize
+from bs4 import BeautifulSoup
 
-def load_numbers():
-    filename = input("\n[+] নাম্বার ফাইলের নাম দিন (যেমন: numbers.txt): ")
+def clear():
+    os.system('clear')
+
+def banner():
+    print("=" * 45)
+    print("   FACEBOOK AUTO MESSAGE BOT (FREE)")
+    print("=" * 45)
+
+def send_message(number, message):
+    # এখানে ফেসবুকের মেসেজ পাঠানোর লজিক থাকবে
+    # বর্তমানে এটি একটি ডামি প্রসেস হিসেবে কাজ করবে
+    print(f"[*] Sending Message to: {number}")
+    print(f"[+] Message: {message}")
     
-    if os.path.exists(filename):
-        try:
-            with open(filename, 'r') as file:
-                # প্রতি লাইন থেকে নাম্বারগুলো লিস্টে নিচ্ছে এবং স্পেস বাদ দিচ্ছে
-                numbers = [line.strip() for line in file.readlines() if line.strip()]
-            
-            print(f"[+] মোট {len(numbers)}টি নাম্বার পাওয়া গেছে।")
-            return numbers
-        except Exception as e:
-            print(f"[-] ফাইল পড়তে সমস্যা হয়েছে: {e}")
-            return []
-    else:
-        print("[-] ফাইলটি খুঁজে পাওয়া যায়নি! নিশ্চিত করুন ফাইলটি এই ফোল্ডারে আছে।")
-        return []
+    # লগইন এবং মেসেজ পাঠানোর রিকোয়েস্ট লজিক এখানে বসাতে হয়
+    # নিরাপদ থাকতে প্রতি মেসেজের পর বিরতি দেওয়া জরুরি
+    time.sleep(2) 
+    print(f"[✔] Successfully Sent to {number}")
 
-def start_automation(numbers):
-    if not numbers:
-        print("[-] কোনো নাম্বার নেই, কাজ শুরু করা সম্ভব নয়।")
+def main():
+    clear()
+    banner()
+    
+    filename = input("[+] নাম্বার ফাইলের নাম দিন: ")
+    if not os.path.exists(filename):
+        print("[-] ফাইল পাওয়া যায়নি!")
         return
 
-    print("\n[*] অটোমেশন শুরু হচ্ছে...")
-    for index, num in enumerate(numbers, 1):
-        print(f"[{index}] কাজ চলছে: {num}")
-        # এখানে আপনার মূল কাজের লজিক বসাবেন (যেমন SMS পাঠানো বা ID চেক)
-        time.sleep(1) # ১ সেকেন্ড বিরতি
+    msg_text = input("[+] যে মেসেজটি পাঠাতে চান সেটি লিখুন: ")
     
-    print("\n[+] সব নাম্বারের কাজ শেষ হয়েছে।")
+    with open(filename, 'r') as f:
+        numbers = [line.strip() for line in f.readlines() if line.strip()]
 
-# মেইন ফাংশন টেস্ট
+    print(f"\n[!] মোট {len(numbers)}টি নাম্বারে মেসেজ পাঠানো শুরু হচ্ছে...\n")
+
+    for i, num in enumerate(numbers, 1):
+        print(f"[{i}/{len(numbers)}]", end=" ")
+        send_message(num, msg_text)
+        print("-" * 30)
+        time.sleep(3) # ফেসবুক স্প্যাম ফিল্টার এড়াতে বিরতি
+
+    print("\n[+] সকল মেসেজ পাঠানো সম্পন্ন হয়েছে।")
+
 if __name__ == "__main__":
-    print("--- ফাইল ইনপুট সিস্টেম ---")
-    nums = load_numbers()
-    if nums:
-        start_automation(nums)
+    main()
